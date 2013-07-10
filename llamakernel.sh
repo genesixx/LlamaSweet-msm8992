@@ -22,7 +22,7 @@ KERNEL_DIR=`pwd`
 REPACK_DIR="${HOME}/android_device_lge_msm8992"
 PATCH_DIR="${HOME}/android_device_lge_msm8992/patch"
 MODULES_DIR="${HOME}/android_device_lge_msm8992/modules"
-ZIP_MOVE="${HOME}/build/LlamaSweet"
+ZIP_MOVE="${HOME}/"
 ZIMAGE_DIR="${HOME}/LlamaSweet-msm8992/arch/arm64/boot/"
 
 # Functions
