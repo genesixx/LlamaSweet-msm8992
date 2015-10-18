@@ -643,6 +643,7 @@ config KERNEL_TEXT_MPU_PROT
 	  all masters; Write access is only permited to the
 	  secure world.
 
+
 config MSM_PERFORMANCE_HOTPLUG_ON
         bool "Hotplug functionality through msm_performance turned on"
         depends on MSM_PERFORMANCE
@@ -652,6 +653,10 @@ config MSM_PERFORMANCE_HOTPLUG_ON
 	  capability of msm_performance driver. Setting this flag to false will
           compile out the nodes needed for core-control functionality through
           msm_performance.
+
+config STATE_NOTIFIER
+        bool "State Notifier"
+	default n
 
 source "drivers/soc/qcom/memshare/Kconfig"
 
