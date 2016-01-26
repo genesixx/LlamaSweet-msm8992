@@ -99,7 +99,6 @@ struct cpufreq_policy {
 	 *     __cpufreq_governor(data, CPUFREQ_GOV_POLICY_EXIT);
 	 */
 	struct rw_semaphore	rwsem;
-
 	unsigned int util;
 };
 
@@ -221,13 +220,14 @@ struct cpufreq_driver {
 
 	/* should be defined, if possible */
 	unsigned int	(*get)	(unsigned int cpu);
-    unsigned int (*getavg)	(struct cpufreq_policy *policy,
-                  unsigned int cpu);
+
 	/* optional */
+	unsigned int (*getavg)	(struct cpufreq_policy *policy,
+                            unsigned int cpu);
+
 	int	(*bios_limit)	(int cpu, unsigned int *limit);
 
 	int	(*exit)		(struct cpufreq_policy *policy);
-	void	(*stop_cpu)	(struct cpufreq_policy *policy);
 	int	(*suspend)	(struct cpufreq_policy *policy);
 	int	(*resume)	(struct cpufreq_policy *policy);
 	struct freq_attr	**attr;
@@ -300,6 +300,8 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
 /* Transition notifiers */
 #define CPUFREQ_PRECHANGE		(0)
 #define CPUFREQ_POSTCHANGE		(1)
+#define CPUFREQ_RESUMECHANGE		(8)
+#define CPUFREQ_SUSPENDCHANGE		(9)
 
 /* Policy Notifiers  */
 #define CPUFREQ_ADJUST			(0)
@@ -402,8 +404,7 @@ struct cpufreq_governor {
 	struct list_head	governor_list;
 	struct module		*owner;
 };
-extern int __cpufreq_driver_getavg(struct cpufreq_policy *policy,
-                                   unsigned int cpu);
+
 /* Pass a target to the cpufreq driver */
 int cpufreq_driver_target(struct cpufreq_policy *policy,
 				 unsigned int target_freq,
@@ -411,6 +412,8 @@ int cpufreq_driver_target(struct cpufreq_policy *policy,
 int __cpufreq_driver_target(struct cpufreq_policy *policy,
 				   unsigned int target_freq,
 				   unsigned int relation);
+extern int __cpufreq_driver_getavg(struct cpufreq_policy *policy,
+                                   unsigned int cpu);
 int cpufreq_register_governor(struct cpufreq_governor *governor);
 void cpufreq_unregister_governor(struct cpufreq_governor *governor);
 
@@ -448,6 +451,9 @@ extern struct cpufreq_governor cpufreq_gov_zzmove;
 #elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ELEMENTALX)
 extern struct cpufreq_governor cpufreq_gov_elementalx;
 #define CPUFREQ_DEFAULT_GOVERNOR	(&cpufreq_gov_elementalx)
+#elif defined(CONFIG_CPU_FREQ_DEFAULT_GOV_ALUCARD)
+extern struct cpufreq_governor cpufreq_gov_alucard;
+#define CPUFREQ_DEFAULT_GOVERNOR (&cpufreq_gov_alucard)
 #endif
 
 /*********************************************************************

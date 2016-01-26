@@ -20,6 +20,7 @@ obj-$(CONFIG_CPU_FREQ_GOV_INTELLIACTIVE)+= cpufreq_intelliactive.o
 obj-$(CONFIG_CPU_FREQ_GOV_BARRY_ALLEN) += cpufreq_barry_allen.o 
 obj-$(CONFIG_CPU_FREQ_GOV_DESPAIR) += cpufreq_despair.o 
 obj-$(CONFIG_CPU_FREQ_GOV_ZZMOOVE) += cpufreq_zzmoove.o 
+obj-$(CONFIG_CPU_FREQ_GOV_ALUCARD)	+= cpufreq_alucard.o
 obj-$(CONFIG_CPU_BOOST) += cpu-boost.o
 
 
