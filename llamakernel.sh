@@ -14,7 +14,8 @@ KERNEL="Image"
 DTBIMAGE="dtb"
 
 # Kernel Details
-VER=".R4."$variant"."
+
+VER=".R6-alpha1.h815."
 
 # Paths
 KERNEL_DIR=`pwd`
