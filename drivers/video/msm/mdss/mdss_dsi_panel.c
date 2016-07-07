@@ -32,9 +32,6 @@
 #if defined (CONFIG_LGE_DISPLAY_TUNING) || defined(CONFIG_LGE_DISPLAY_DUAL_BACKLIGHT)
 struct mdss_panel_data *pdata_base;
 #endif
-#ifdef CONFIG_POWERSUSPEND
-#include <linux/powersuspend.h>
-#endif
 
 #define DT_CMD_HDR 6
 #define MIN_REFRESH_RATE 30
@@ -683,10 +680,6 @@ static int mdss_dsi_panel_on(struct mdss_panel_data *pdata)
 		return -EINVAL;
 	}
 
-#ifdef CONFIG_POWERSUSPEND
-	set_power_suspend_state_panel_hook(POWER_SUSPEND_INACTIVE);
-#endif
-
 	pinfo = &pdata->panel_info;
 	ctrl = container_of(pdata, struct mdss_dsi_ctrl_pdata,
 				panel_data);
@@ -758,9 +751,6 @@ static int mdss_dsi_panel_off(struct mdss_panel_data *pdata)
 #if IS_ENABLED(CONFIG_LGE_DISPLAY_POWER_SEQUENCE)
 	if (lge_mdss_dsi.post_mdss_dsi_panel_off)
 		lge_mdss_dsi.post_mdss_dsi_panel_off(pdata);
-#endif
-#ifdef CONFIG_POWERSUSPEND
-	set_power_suspend_state_panel_hook(POWER_SUSPEND_ACTIVE);
 #endif
 
 end:
