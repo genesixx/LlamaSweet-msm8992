@@ -2414,7 +2414,7 @@ static void __ref do_core_control(long temp)
 		temp >= temp_threshold) {
 		for (i = num_possible_cpus(); i > 0; i--) {
 			if (i < 4 && !polling_enabled)
-+				continue;
+				continue;
 			if (!(msm_thermal_info.core_control_mask & BIT(i)))
 				continue;
 			if (cpus_offlined & BIT(i) && !cpu_online(i))
