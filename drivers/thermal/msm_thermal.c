@@ -83,6 +83,16 @@
 		_val |= 2;				\
 } while (0)
 
+//custom thermal
+#define DEF_TEMP_THRESHOLD 44
+#define HOTPLUG_SENSOR_ID 18
+#define HOTPLUG_HYSTERESIS 2
+unsigned int temp_threshold = DEF_TEMP_THRESHOLD;
+module_param(temp_threshold, int, 0644);
+
+static struct msm_thermal_data msm_thermal_info;
+static struct delayed_work check_temp_work;
+
 #ifdef CONFIG_LGE_PM
 #define IS_IN_BIG_CLUSTER(cpu) ((cpu < 4) ? 0 : 1)
 #endif
