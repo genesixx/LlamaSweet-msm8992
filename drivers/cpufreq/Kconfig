@@ -126,12 +126,6 @@ config CPU_FREQ_DEFAULT_GOV_INTERACTIVE
 	  'interactive' governor for latency-sensitive workloads.
 
 
-config CPU_FREQ_DEFAULT_GOV_LIONHEART
-            bool "lionheart"
-            select CPU_FREQ_GOV_LIONHEART
-            help
-              Use the CPUFreq governor 'lionheart' as default.
-
 config CPU_FREQ_DEFAULT_GOV_BIOSHOCK
 	bool "BioShock"
 	select CPU_FREQ_GOV_BIOSHOCK
@@ -168,15 +162,6 @@ config CPU_FREQ_DEFAULT_GOV_DESPAIR
 	bool "despair"
 	select CPU_FREQ_GOV_DESPAIR
 	help
-
-config CPU_FREQ_DEFAULT_GOV_BARRY_ALLEN
-	bool "barry_allen"
-	select CPU_FREQ_GOV_BARRY_ALLEN
-	help
-	  Use the CPUFreq governor 'barry_allen' as default. This allows
-	  you to get a full dynamic cpu frequency capable system by simply
-	  loading your cpufreq low-level hardware driver, using the
-	  'barry_allen' governor for latency-sensitive workloads.
 
 config CPU_FREQ_DEFAULT_GOV_ZZMOOVE
 	bool "zzmoove"
@@ -319,13 +304,6 @@ config CPU_FREQ_GOV_CONSERVATIVE
 
 	  If in doubt, say N.
 
-config CPU_FREQ_GOV_LIONHEART
-           tristate "'lionheart' cpufreq governor"
-           depends on CPU_FREQ
-           help
-             lionheart' - a "smart" optimized governor!
-             If in doubt, say N.
-
 config CPU_FREQ_GOV_BIOSHOCK
 	tristate "'bioshock' cpufreq bioshock"
 	depends on CPU_FREQ
@@ -352,23 +330,6 @@ config CPU_FREQ_GOV_INTELLIACTIVE
 
 	  To compile this driver as a module, choose M here: the
 	  module will be called cpufreq_interactive.
-
-	  For details, take a look at linux/Documentation/cpu-freq.
-
-	  If in doubt, say N.
-
-config CPU_FREQ_GOV_BARRY_ALLEN
-	tristate "'barry_allen' cpufreq policy governor"
-	help
-	  'barry_allen' - This driver adds a dynamic cpufreq policy governor
-	  designed for latency-sensitive workloads.
-
-	  This governor attempts to reduce the latency of clock
-	  increases so that the system is more responsive to
-	  barry_allen workloads.
-
-	  To compile this driver as a module, choose M here: the
-	  module will be called cpufreq_barry_allen.
 
 	  For details, take a look at linux/Documentation/cpu-freq.
 

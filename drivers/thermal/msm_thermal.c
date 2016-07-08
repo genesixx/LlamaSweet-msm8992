@@ -83,6 +83,16 @@
 		_val |= 2;				\
 } while (0)
 
+//custom thermal
+#define DEF_TEMP_THRESHOLD 44
+#define HOTPLUG_SENSOR_ID 18
+#define HOTPLUG_HYSTERESIS 2
+unsigned int temp_threshold = DEF_TEMP_THRESHOLD;
+module_param(temp_threshold, int, 0644);
+
+static struct msm_thermal_data msm_thermal_info;
+static struct delayed_work check_temp_work;
+
 #ifdef CONFIG_LGE_PM
 #define IS_IN_BIG_CLUSTER(cpu) ((cpu < 4) ? 0 : 1)
 #endif
@@ -2401,8 +2411,10 @@ static void __ref do_core_control(long temp)
 
 	mutex_lock(&core_control_mutex);
 	if (msm_thermal_info.core_control_mask &&
-		temp >= msm_thermal_info.core_limit_temp_degC) {
+		temp >= temp_threshold) {
 		for (i = num_possible_cpus(); i > 0; i--) {
+			if (i < 4 && !polling_enabled)
+				continue;
 			if (!(msm_thermal_info.core_control_mask & BIT(i)))
 				continue;
 			if (cpus_offlined & BIT(i) && !cpu_online(i))
@@ -2422,8 +2434,7 @@ static void __ref do_core_control(long temp)
 			break;
 		}
 	} else if (msm_thermal_info.core_control_mask && cpus_offlined &&
-		temp <= (msm_thermal_info.core_limit_temp_degC -
-			msm_thermal_info.core_temp_hysteresis_degC)) {
+		temp <= (temp_threshold - HOTPLUG_HYSTERESIS)) {
 		for (i = 0; i < num_possible_cpus(); i++) {
 			if (!(cpus_offlined & BIT(i)))
 				continue;

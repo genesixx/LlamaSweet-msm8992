@@ -643,6 +643,12 @@ config KERNEL_TEXT_MPU_PROT
 	  all masters; Write access is only permited to the
 	  secure world.
 
+config BRICKED_HOTPLUG
+	bool "Enable kernel based mpdecision"
+	depends on MSM_RUN_QUEUE_STATS
+	default y
+	help
+	 This enables kernel based multi core control.
 
 config MSM_PERFORMANCE_HOTPLUG_ON
         bool "Hotplug functionality through msm_performance turned on"
@@ -653,7 +659,7 @@ config MSM_PERFORMANCE_HOTPLUG_ON
 	  capability of msm_performance driver. Setting this flag to false will
           compile out the nodes needed for core-control functionality through
           msm_performance.
-
+          
 config STATE_NOTIFIER
         bool "State Notifier"
 	default n
