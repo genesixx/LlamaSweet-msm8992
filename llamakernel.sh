@@ -15,7 +15,7 @@ DTBIMAGE="dtb"
 
 # Kernel Details
 
-VER=".R6-alpha2.h811."
+VER=".R6.h815."
 
 # Paths
 KERNEL_DIR=`pwd`
