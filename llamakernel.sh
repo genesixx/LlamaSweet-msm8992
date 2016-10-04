@@ -38,7 +38,7 @@ function clean_all {
 function make_kernel {
 		echo
 		make $config
-		make $THREAD
+		make $THREAD CONFIG_NO_ERROR_ON_MISMATCH=y
 		
 }
 
