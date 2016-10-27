@@ -1,0 +1,9 @@
+# Aliases extracted from modules themselves.
+alias spi:spidev spidev
+alias of:N*T*Crohm,dh2228fv* spidev
+alias pci:v00001AE9d00000302sv*sd*bc*sc*i* wil6210
+alias pci:v00001AE9d00000310sv*sd*bc*sc*i* wil6210
+alias pci:v00001AE9d00000301sv*sd*bc*sc*i* wil6210
+alias input:b*v*p*e*-e*k*r*a*m*l*s*f*w* evbug
+alias tty-ldisc-26 brcm_hci_ldisc
+alias platform:msm-buspm-dev msm_buspm_dev

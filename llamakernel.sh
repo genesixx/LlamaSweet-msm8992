@@ -15,7 +15,7 @@ DTBIMAGE="dtb"
 
 # Kernel Details
 
-VER=".R6.h815."
+VER=".R7.1-STOCK.h815."
 
 # Paths
 KERNEL_DIR=`pwd`
@@ -23,13 +23,14 @@ REPACK_DIR="${HOME}/android_device_lge_msm8992"
 PATCH_DIR="${HOME}/android_device_lge_msm8992/patch"
 MODULES_DIR="${HOME}/android_device_lge_msm8992/modules"
 ZIP_MOVE="${HOME}/"
-ZIMAGE_DIR="${HOME}/LlamaSweet-msm8992/arch/arm64/boot/"
-
+ZIMAGE_DIR="${HOME}/stock/arch/arm64/boot/"
+RAMFS="${HOME}/ramdisk/Imperium_ramdisk_${ramdisk}/"
 # Functions
 function clean_all {
-		rm -rf $MODULES_DIR/*
-		cd ~/LlamaSweet-msm8992/out/kernel
-		rm -rf $DTBIMAGE zImage
+		find -name '*.dtb' -exec rm -rf {} \;
+    find -name '*.ko' -exec rm -rf {} \;
+		cd ~/stock/out/kernel
+		rm -rf $RAMFS/Imperium_ramdisk_${ramdisk}.cpio.gz 
 		cd $KERNEL_DIR
 		echo
 		make clean && make mrproper
@@ -42,23 +43,63 @@ function make_kernel {
 		
 }
 
-function make_modules {
-		rm `echo $MODULES_DIR"/*"`
-		find $KERNEL_DIR -name '*.ko' -exec cp -v {} $MODULES_DIR \;
-}
-
 function make_dtb {
-		$REPACK_DIR/tools/dtbToolCM -2 -o out/kernel/$DTBIMAGE -s 2048 -p scripts/dtc/ arch/arm64/boot/dts/
+		DTB=`find . -name "*.dtb" | head -1`echo $DTB
+    echo $DTB
+      DTBDIR=`dirname $DTB`
+    echo $DTBDIR
+    [[ -z `strings $DTB | grep "qcom,board-id"` ]] || DTBVERCMD="--force-v3"
+    echo $DTBVERCMD
+    ./scripts/dtbtoolv3 $DTBVERCMD -o dt.img -s 4096 -p scripts/dtc/ $DTBDIR/
 }
 
+
+
+function make_ramdisk {
+cd $RAMFS
+chmod -R g-w *
+chmod g-w *.rc default.prop sbin/*.sh
+chmod 644 file_contexts
+chmod 644 se*
+chmod 644 default.prop
+chmod 750 *.rc
+chmod 750 *.sh
+chmod 640 fstab*
+chmod 644 ueventd*
+chmod 644 lge.fo*
+chmod 644 set_emmc_size.sh
+chmod 771 data
+chmod 755 dev
+chmod 555 proc
+chmod 755 res
+chmod 644 res/images/charger/*
+chmod 750 sbin
+chmod 750 sbin/*
+chmod 755 sbin/busybox
+chmod 777 sbin/*.sh
+chmod 555 sys
+chmod 755 system
+find . | cpio -o -H newc | gzip > ../ramdisk.img
+cd $KERNEL_DIR
+}
+
+function make_modules {
+  rm -rf module
+  mkdir -p module
+		make ARCH=arm64 CROSS_COMPILE=${CROSS_COMPILE} -j4 INSTALL_MOD_PATH=module INSTALL_MOD_STRIP=1 modules_install
+    find module/ -name '*.ko' -type f -exec cp '{}' out/system/lib/modules/ \;
+    rm out/system/lib/modules/texfat.ko
+    sh ./tuxera_update.sh --target target/lg.d/mobile-msm8992-3.10.84 --use-cache --latest --max-cache-entries 2 --source-dir . --output-dir . -a --user lg-mobile --pass AumlTsj0ou
+    tar -xzf tuxera-exfat*.tgz
+    perl ./scripts/sign-file sha1 signing_key.priv signing_key.x509 tuxera-exfat*/exfat/kernel-module/texfat.ko
+    cp tuxera-exfat*/exfat/kernel-module/texfat.ko  out/system/lib/modules/
+}
 function make_boot {
-		cp -vr $ZIMAGE_DIR/Image.gz-dtb ~/LlamaSweet-msm8992/out/kernel/zImage
-		
+		./scripts/mkbootimg --kernel $ZIMAGE_DIR/Image --ramdisk ${HOME}/ramdisk/ramdisk.img --base 0x00000000 --pagesize 4096 --kernel_offset 0x00008000 --ramdisk_offset 0x01000000 --tags_offset 0x00000100 --cmdline 'console=ttyHSL0,115200,n8 androidboot.console=ttyHSL0 user_debug=31 ehci-hcd.park=3 lpm_levels.sleep_disabled=1 androidboot.selinux=enforcing msm_rtb.filter=0x37 androidboot.hardware=p1' --dt dt.img -o out/boot.img
 }
-
 
 function make_zip {
-		cd ~/LlamaSweet-msm8992/out
+		cd ~/stock/out
 		zip -r9 `echo $AK_VER`.zip *
 		mv  `echo $AK_VER`.zip $ZIP_MOVE
 		cd $KERNEL_DIR
@@ -80,6 +121,7 @@ do
 case "$choice" in
 	"h815")
 		variant="h815"
+   ramdisk="H815"
 		config="cyanogenmod_h815_defconfig"
 		break;;
 	"h811")
@@ -93,7 +135,8 @@ while read -p "Do you want to use UBERTC 4.9(1) or UBERTC 5.3(2)? " echoice
 do
 case "$echoice" in
 	1 )
-		export CROSS_COMPILE=${HOME}/aarch64-linux-android-4.9-kernel/bin/aarch64-linux-android-
+		export CROSS_COMPILE=${HOME}/aarch64-linux-android-4.9-kernel-old/bin/aarch64-linux-android-
+    export PATH=${HOME}/aarch64-linux-android-4.9-kernel-old/bin:$PATH
 		TC="UBER4.9"
 		echo
 		echo "Using UBERTC 4.9"
@@ -168,8 +211,9 @@ case "$dchoice" in
 	y|Y )
 		make_kernel
 		make_dtb
-		make_modules
+    make_ramdisk
 		make_boot
+    make_modules
 		make_zip
 		break
 		;;

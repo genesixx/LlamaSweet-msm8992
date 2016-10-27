@@ -1,0 +1,2 @@
+obj-m += texfat.o
+texfat-objs := aops.o bitmap.o chain.o compat.o debug.o dir.o fat.o file.o inode.o lcnalloc.o namei.o super.o sysctl.o time.o unistr.o 

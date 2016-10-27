@@ -1,0 +1,3 @@
+ARCH=arm64
+CROSS_COMPILE=aarch64-linux-android-
+CUST_KENV=KCFLAGS=-mno-android
