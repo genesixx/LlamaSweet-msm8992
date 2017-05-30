@@ -1,4 +1,4 @@
-/*
+ /*
  *  linux/fs/namei.c
  *
  *  Copyright (C) 1991, 1992  Linus Torvalds
@@ -1993,7 +1993,7 @@ static int path_lookupat(int dfd, const char *name,
 			}
 		}
 	}
-
+out:
 	if (base)
 		fput(base);
 
